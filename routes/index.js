@@ -11,7 +11,12 @@ router.get("/", function (req, res, next) {
   });
 });
 
-router.get("/test.mkv", function (req, res, next) {
+router.get("/hello", function (req, res, next) {
+  console.log("getting request");
+  res.send("Hello World!");
+});
+
+router.get("/test", function (req, res, next) {
   var torrentStream = require("torrent-stream");
 
   let mg_link =
@@ -27,7 +32,7 @@ router.get("/test.mkv", function (req, res, next) {
       stream.on("data", (data) => {
         console.log("are we here yet?");
         res.send(data);
-        stream.destroy()
+        stream.destroy();
       });
 
       // console.log();
