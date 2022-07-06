@@ -1,12 +1,13 @@
 var express = require("express");
 var router = express.Router();
+const fs = require('fs');
 
 /* GET users listing. */
 router.get("/", function (req, res, next) {
   res.send("respond with a resource");
 });
 
-router.get("/more.mkv", function (req, res, next) {
+router.get("/more", function (req, res, next) {
   var torrentStream = require("torrent-stream");
 
   let mg_link =
@@ -18,6 +19,7 @@ router.get("/more.mkv", function (req, res, next) {
       console.log("We are ready======", engine.torrent.info);
 
       const fileSize = engine.torrent.info.files[0].length;
+      // const fileSize = fs.statSync('/Users/kan/Downloads/video.mp4').size;
 
       console.log(req.headers.range);
 
@@ -33,7 +35,7 @@ router.get("/more.mkv", function (req, res, next) {
       const contentLength = end - start + 1;
 
       const headers = {
-        "Content-Range": `bytes - ${start}-${end}/${fileSize}`,
+        "Content-Range": `bytes ${start}-${end}/${fileSize}`,
         "Accept-Ranges": "bytes",
         "Content-Length": contentLength,
         "Content-Type": "video/mkv",
@@ -41,6 +43,7 @@ router.get("/more.mkv", function (req, res, next) {
 
       console.log("headers", headers);
       var stream = engine.files[0].createReadStream({ start, end });
+      // var stream = fs.createReadStream('/Users/kan/Downloads/video.mp4', { start, end });
 
       res.writeHead(206, headers);
 
