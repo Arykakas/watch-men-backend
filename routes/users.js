@@ -6,7 +6,7 @@ router.get("/", function (req, res, next) {
   res.send("respond with a resource");
 });
 
-router.get("/more", function (req, res, next) {
+router.get("/more.mkv", function (req, res, next) {
   var torrentStream = require("torrent-stream");
 
   let mg_link =
@@ -19,7 +19,11 @@ router.get("/more", function (req, res, next) {
 
       const fileSize = engine.torrent.info.files[0].length;
 
-      const start = req.headers.range || 0;
+      console.log(req.headers.range);
+
+      const range = req.headers.range
+
+      const start = Number(range.replace(/\D/g, ''));
       const chunk_size = 10 ** 6; // 1 mb
 
       console.log("start, chunk_size, fileSize : ", start, chunk_size, fileSize);
