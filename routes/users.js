@@ -15,14 +15,21 @@ router.get("/more", function (req, res, next) {
   var engine = torrentStream(`magnet:${mg_link}`);
   try {
     engine.on("ready", function () {
-      console.log("We are ready======", engine.files, engine);
-      const start = req.headers.range;
-      const chunk_size = 10 ** 6; // 1 mb
-      const end = Math.min(start + chunk_size, stream.length - 1);
+      console.log("We are ready======", engine.torrent.info);
 
-      const contentLength = start - end + 1;
+      const fileSize = engine.torrent.info.files[0].length;
+
+      const start = req.headers.range || 0;
+      const chunk_size = 10 ** 6; // 1 mb
+
+      console.log("start, chunk_size, fileSize : ", start, chunk_size, fileSize);
+
+      const end = Math.min(start + chunk_size, fileSize - 1);
+
+      const contentLength = end - start + 1;
+
       const headers = {
-        "Content-Range": `bytes - ${start}-${end}/${stream.length}`,
+        "Content-Range": `bytes - ${start}-${end}/${fileSize}`,
         "Accept-Ranges": "bytes",
         "Content-Length": contentLength,
         "Content-Type": "video/mkv",
