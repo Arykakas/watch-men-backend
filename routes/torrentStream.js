@@ -10,8 +10,19 @@ const torrentMgStream = (mglink, range) => {
       engine.on("ready", function () {
         const info = engine.torrent.info;
         let fileSize = -1;
-
-        fileSize = info.files[2].length;
+        let playIndex = -1;
+        const fileArray = info.files;
+        fileArray.forEach((file, index) => {
+          const fileExtension = file.path
+            .toString()
+            .split("")
+            .slice(-3)
+            .join("");
+          if (fileExtension === "mp4" || fileExtension === "mkv") {
+            playIndex = index;
+          }
+        });
+        fileSize = info.files[playIndex].length;
         const start = range ? Number(range.replace(/\D/g, "")) : 0;
         const chunk_size = fileSize;
         const end = Math.min(start + chunk_size, fileSize - 1);
@@ -25,7 +36,7 @@ const torrentMgStream = (mglink, range) => {
           "Content-Type": "video/mp4",
         };
 
-        stream = engine.files[2].createReadStream({ start, end });
+        stream = engine.files[playIndex].createReadStream({ start, end });
         resolve({ stream, headers });
       });
     } catch (e) {
