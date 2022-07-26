@@ -23,10 +23,10 @@ router.get("/stream", async function (req, res, next) {
         req.query.mglink,
         range
       );
-      // console.log("response", streamResp);
+      // console.log("response==", { streamResp });
       const { stream, headers } = streamResp;
       res.writeHead(206, headers);
-      if (stream) stream.pipe(res);
+      stream.pipe(res);
     } catch (e) {
       console.log("error", e.message);
     }
