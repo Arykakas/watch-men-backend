@@ -1,19 +1,28 @@
 var express = require("express");
 var router = express.Router();
-const fs = require("fs");
-// import { torrentMgStream } from "./torrentStream";
 
-const torrentStream = require("./torrentStream");
+const torrentSearch = require("../services/search");
+const torrentStream = require("../services/stream");
 
-/* GET users listing. */
-router.get("/", function (req, res, next) {
-  res.send("respond with a resource");
+router.post("/search", async function (req, res) {
+  try {
+    if (req.body.search_keyword.length > 0) {
+      const torrentSearchResponse = await torrentSearch.getSeachOptions(
+        req.body
+      );
+      res.status(200).send(torrentSearchResponse);
+      return null;
+    }
+    res.status(404).send("Search query is empty");
+  } catch (e) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 router.get("/stream", async function (req, res, next) {
   if (!req.query.mglink) {
-    ctx.staus = 404;
-    ctx.body = "Magnetic link required";
+    res.staus = 404;
+    res.body = "Magnetic link required";
     return;
   } else {
     console.log("req header===", req.query.mglink);
